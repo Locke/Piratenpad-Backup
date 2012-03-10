@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 cp config.default config
 
