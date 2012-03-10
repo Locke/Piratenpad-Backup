@@ -3,7 +3,7 @@
 /**
 * returns array with pad names
 */
-function get_recent_pads($url, $email, $password) {
+function get_recent_pads($url, $email, $password, $check_public = true) {
 	$vars = array(
 		"url" => $url,
 		"email" => $email,
@@ -127,17 +127,26 @@ function get_recent_pads($url, $email, $password) {
 	#die();
 	
 	// 9. check pads public status
-	foreach($pads as $id => $pad) {
-		#print_r($pad);
-		$response = drupal_http_request($pad["url"], $_headers, 'GET', http_build_query($_data), 0);
-		#print_r($response->code);
-		if ($response->code != 200)
-			unset($pads[$id]);
+	if($check_public){
+		foreach($pads as $id => $pad) {
+			#print_r($pad);
+			$response = drupal_http_request($pad["url"], $_headers, 'GET', http_build_query($_data), 0);
+			#print_r($response->code);
+			if ($response->code != 200)
+				unset($pads[$id]);
+		}
 	}
 	#print_r($pads);
 	#die();
 	
 	return $pads;
 }
+
+print_r($argv);
+die();
+
+$pads = get_recent_pads($argv[1], $argv[2], $argv[3], $argv[4]);
+
+print_r($pads);
 
 ?>
