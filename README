@@ -1,1 +1,9 @@
 Aim is to get recent changed pads and store them in a git repo
+
+Usage:
+
+At first you need to run init.sh, then edit the config file.
+
+Then you can run the backups via backup.sh
+
+You shuld run this one time and check the results, then you can add it to crontab
