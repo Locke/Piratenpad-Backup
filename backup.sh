@@ -1,5 +1,10 @@
 #!/bin/bash
 
+MY_CMD="$(readlink -f "${0}")"
+MY_DIR="$(dirname "${MY_CMD}")"
+
+cd "$MY_DIR"
+
 source config
 
 ./updatepadlist.sh
