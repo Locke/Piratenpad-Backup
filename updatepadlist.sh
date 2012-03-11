@@ -2,4 +2,4 @@
 
 source config
 
-php recentpads.php "$base" "$email" "$password" "$check_public" &> pads.list
+php recentpads.php "$base" "$email" "$password" "$check_public" "$interval" &> pads.list
