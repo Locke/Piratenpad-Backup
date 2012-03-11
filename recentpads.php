@@ -5,13 +5,13 @@
 */
 function get_recent_pads($url, $email, $password, $check_public, $filter_time) {
 	$vars = array(
-		"url" => $url,
+		"url" => $url."/",
 		"email" => $email,
 		"password" => $password,
 	);
 	
 	// 1. get the piratepad team cookies
-	$_url = $url;
+	$_url = $url."/";
 	$_headers = array();
 	$_data = array();
 	
@@ -65,7 +65,7 @@ function get_recent_pads($url, $email, $password, $check_public, $filter_time) {
 	
 	// 6. do the login
 	$_headers['Content-Type'] = "application/x-www-form-urlencoded";
-	$_url = "http://".$url."/ep/account/sign-in?cont=".urlencode("http://".$url."/ep/padlist/all-pads");
+	$_url = $url."/ep/account/sign-in?cont=".urlencode($url."/ep/padlist/all-pads");
 	$_data = array(
 		"email" => $email,
 		"password" => $password,
@@ -99,7 +99,7 @@ function get_recent_pads($url, $email, $password, $check_public, $filter_time) {
 		#print_r($regs2);
 		$pads[$id] = array();
 		$pads[$id]["name"] = strip_tags($reg);
-		$pads[$id]["url"] = "http://".$url.$regs2[1][1];
+		$pads[$id]["url"] = $url.$regs2[1][1];
 	}
 	
 	preg_match_all("/<td\s*class=\"lastEditedDate\">(.*)?</", $response->data, $regs);
@@ -121,7 +121,7 @@ function get_recent_pads($url, $email, $password, $check_public, $filter_time) {
 	#die();
 	
 	// 8. sign out
-	$_url = "http://".$url."/ep/account/sign-out";
+	$_url = $url."/ep/account/sign-out";
 	$response = drupal_http_request($_url, $_headers, 'GET', http_build_query($_data), 0);
 	#print_r($response);
 	#die();
