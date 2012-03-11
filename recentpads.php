@@ -84,13 +84,17 @@ function get_recent_pads($url, $email, $password, $check_public, $filter_time) {
 	
 	$pads = array();
 	
-	if (strpos($response->data, "padlock.gif") === false) {
+	/*if (strpos($response->data, "padlock.gif") === false) {
 		// no padlock
-			preg_match_all("/<td\s*class=\"title first\">(.*)?</", $response->data, $regs);
+		echo "no padlock/n";
+		preg_match_all("/<td\s*class=\"title first\">(.*)?</", $response->data, $regs);
 	} else {
 		// padlock found
-			preg_match_all("/<td\s*class=\"title\">(.*)?</", $response->data, $regs);
-	}
+		echo "padlock found/n";
+		//preg_match_all("/<td\s*class=\"title\">(.*)?</", $response->data, $regs);
+	}*/
+	
+	preg_match_all("/<td\s*class=\"title first\">(.*)?</", $response->data, $regs);
 	#print_r($regs);
 	#die();
 	
