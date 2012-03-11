@@ -1,5 +1,8 @@
 <?php
 
+include("bootstrap.inc");
+include("common.inc");
+
 /**
 * returns array with pad names
 */
