@@ -1,3 +1,4 @@
 config
 pads.list
 backups
+*.swp
