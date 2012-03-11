@@ -3,7 +3,7 @@
 /**
 * returns array with pad names
 */
-function get_recent_pads($url, $email, $password, $check_public = true) {
+function get_recent_pads($url, $email, $password, $check_public, $filter_time) {
 	$vars = array(
 		"url" => $url,
 		"email" => $email,
@@ -126,6 +126,15 @@ function get_recent_pads($url, $email, $password, $check_public = true) {
 	#print_r($response);
 	#die();
 	
+	// clear old pads
+	if($filter_time > 0){
+		foreach($pads as $id => $pad) {
+			#print_r($pad);
+			if ($pad["last_edited"] < $filter_time)
+				unset($pads[$id]);
+		}
+	}
+
 	// 9. check pads public status
 	if($check_public){
 		foreach($pads as $id => $pad) {
@@ -142,11 +151,21 @@ function get_recent_pads($url, $email, $password, $check_public = true) {
 	return $pads;
 }
 
-print_r($argv);
-die();
+error_reporting(E_ALL ^ E_NOTICE);
 
-$pads = get_recent_pads($argv[1], $argv[2], $argv[3], $argv[4]);
+//print_r($argv);
+//die();
 
-print_r($pads);
+$time = 0;
+if($argv[5] > 0)
+	$time = time() - $argv[5];
+
+$pads = get_recent_pads($argv[1], $argv[2], $argv[3], ($argv[4] == "true"), $time);
+
+//print_r($pads);
+
+foreach($pads as $id => $pad) {
+	echo str_replace($argv[1]."/", "", $pad["url"]) . "\n";
+}
 
 ?>
