@@ -1,0 +1,5 @@
+* get non-public pads when logged in
+* consider doing it all in one language
+** best would be php, as the most important script is in php
+** porting the php script would be a lot of work
+* php script should be ported to run without (or with less) drupal code
