@@ -4,6 +4,55 @@ include("bootstrap.inc");
 include("common.inc");
 
 /**
+* parse html
+*/
+function parse($html, $url){
+	$pads = array();
+	
+	/*if (strpos($response->data, "padlock.gif") === false) {
+		// no padlock
+		echo "no padlock/n";
+		preg_match_all("/<td\s*class=\"title first\">(.*)?</", $response->data, $regs);
+	} else {
+		// padlock found
+		echo "padlock found/n";
+		//preg_match_all("/<td\s*class=\"title\">(.*)?</", $response->data, $regs);
+	}*/
+	
+	preg_match_all("/<td\s*class=\"title first\">(.*)?</", $html, $regs);
+	#print_r($regs);
+	#die();
+	
+	foreach($regs[1] as $id => $reg) {
+		preg_match_all("/(\/.*)?\"/", $reg, $regs2);
+		#print_r($regs2);
+		$pads[$id] = array();
+		$pads[$id]["name"] = strip_tags($reg);
+		$pads[$id]["url"] = $url.$regs2[1][1];
+	}
+	
+	preg_match_all("/<td\s*class=\"lastEditedDate\">(.*)?</", $html, $regs);
+	#print_r($regs);
+	foreach($regs[1] as $id => $reg) {
+		$edited = strip_tags($reg);
+		$edited = str_replace("ago", "", $edited);
+		$edited = trim($edited);
+		$edited = "- ".$edited;
+		$pads[$id]["last_edited"] = strtotime($edited);
+	}
+	
+	preg_match_all("/<td\s*class=\"editors\">(.*)?</", $html, $regs);
+	#print_r($regs);
+	foreach($regs[1] as $id => $reg) {
+		$pads[$id]["editor"] = strip_tags($reg);
+	}
+	#print_r($pads);
+	#die();
+
+	return $pads;
+}
+
+/**
 * returns array with pad names
 */
 function get_recent_pads($url, $email, $password, $check_public, $filter_time) {
@@ -85,48 +134,8 @@ function get_recent_pads($url, $email, $password, $check_public, $filter_time) {
 	$response = drupal_http_request($_url, $_headers, 'GET', http_build_query($_data), 0);
 	#print_r($response);
 	
-	$pads = array();
-	
-	/*if (strpos($response->data, "padlock.gif") === false) {
-		// no padlock
-		echo "no padlock/n";
-		preg_match_all("/<td\s*class=\"title first\">(.*)?</", $response->data, $regs);
-	} else {
-		// padlock found
-		echo "padlock found/n";
-		//preg_match_all("/<td\s*class=\"title\">(.*)?</", $response->data, $regs);
-	}*/
-	
-	preg_match_all("/<td\s*class=\"title first\">(.*)?</", $response->data, $regs);
-	#print_r($regs);
-	#die();
-	
-	foreach($regs[1] as $id => $reg) {
-		preg_match_all("/(\/.*)?\"/", $reg, $regs2);
-		#print_r($regs2);
-		$pads[$id] = array();
-		$pads[$id]["name"] = strip_tags($reg);
-		$pads[$id]["url"] = $url.$regs2[1][1];
-	}
-	
-	preg_match_all("/<td\s*class=\"lastEditedDate\">(.*)?</", $response->data, $regs);
-	#print_r($regs);
-	foreach($regs[1] as $id => $reg) {
-		$edited = strip_tags($reg);
-		$edited = str_replace("ago", "", $edited);
-		$edited = trim($edited);
-		$edited = "- ".$edited;
-		$pads[$id]["last_edited"] = strtotime($edited);
-	}
-	
-	preg_match_all("/<td\s*class=\"editors\">(.*)?</", $response->data, $regs);
-	#print_r($regs);
-	foreach($regs[1] as $id => $reg) {
-		$pads[$id]["editor"] = strip_tags($reg);
-	}
-	#print_r($pads);
-	#die();
-	
+	$pads = parse($response->data, $url);
+
 	// 8. sign out
 	$_url = $url."/ep/account/sign-out";
 	$response = drupal_http_request($_url, $_headers, 'GET', http_build_query($_data), 0);
@@ -158,7 +167,7 @@ function get_recent_pads($url, $email, $password, $check_public, $filter_time) {
 	return $pads;
 }
 
-error_reporting(E_ALL ^ E_NOTICE);
+//error_reporting(E_ALL ^ E_NOTICE);
 
 //print_r($argv);
 //die();
