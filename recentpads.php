@@ -67,6 +67,7 @@ function fetch_recent_pads($url, $email, $password, $check_public, $filter_time)
 	);
 	
 	// 1. get the piratepad team cookies
+	echo("1. get the piratepad team cookies\n");
 	$_url = $url."/";
 	$_headers = array();
 	$_data = array();
@@ -87,6 +88,7 @@ function fetch_recent_pads($url, $email, $password, $check_public, $filter_time)
 	$_url = $response->headers['Location'];
 	
 	// 2. get the piratepad cookie
+	echo("2. get the piratepad cookie\n");
 	$response = drupal_http_request($_url, $_headers, 'GET', http_build_query($_data), 0);
 	#print_r($response);
 	#die();
@@ -103,23 +105,27 @@ function fetch_recent_pads($url, $email, $password, $check_public, $filter_time)
 	$_url = $response->headers['Location'];
 	
 	// 3. get the 1st redirect to the login screen
+	echo("3. get the 1st redirect to the login screen\n");
 	$response = drupal_http_request($_url, $_headers, 'GET', http_build_query($_data), 0);
 	#print_r($response);
 	#die();
 	$_url = $response->headers['Location'];
 	
 	// 4. get the 2nd redirect to the login screen
+	echo("4. get the 2nd redirect to the login screen\n");
 	$response = drupal_http_request($_url, $_headers, 'GET', http_build_query($_data), 0);
 	#print_r($response);
 	#die();
 	$_url = $response->headers['Location'];
 	
 	// 5. get the login screen
+	echo("5. get the login screen\n");
 	$response = drupal_http_request($_url, $_headers, 'GET', http_build_query($_data), 0);
 	#print_r($response);
 	#die();
 	
 	// 6. do the login
+	echo("6. do the login\n");
 	$_headers['Content-Type'] = "application/x-www-form-urlencoded";
 	$_url = $url."/ep/account/sign-in?cont=".urlencode($url."/ep/padlist/all-pads");
 	$_data = array(
@@ -133,6 +139,7 @@ function fetch_recent_pads($url, $email, $password, $check_public, $filter_time)
 	$_url = $response->headers['Location'];
 	
 	// 7. get the result page
+	echo("7. get the result page\n");
 	unset($_headers['Content-Type']);
 	$_data = array();
 	$response = drupal_http_request($_url, $_headers, 'GET', http_build_query($_data), 0);
@@ -141,6 +148,7 @@ function fetch_recent_pads($url, $email, $password, $check_public, $filter_time)
 	$pads = parse($response->data, $url);
 	
 	// clear old pads
+	echo("clear old pads\n");
 	if($filter_time > 0){
 		foreach($pads as $id => $pad) {
 			#print_r($pad);
@@ -149,9 +157,10 @@ function fetch_recent_pads($url, $email, $password, $check_public, $filter_time)
 		}
 	}
 
-	// 9. check pads public status
+	// sign out if backup only public pads
 	if($check_public){
 		// 8. sign out
+		echo("8. sign out\n");
 		$_url = $url."/ep/account/sign-out";
 		$response = drupal_http_request($_url, $_headers, 'GET', http_build_query($_data), 0);
 		#print_r($response);
@@ -166,6 +175,7 @@ function fetch_recent_pads($url, $email, $password, $check_public, $filter_time)
 
 	
 	/* download pads */
+	echo("download pads\n");
 	foreach($pads as $id => $pad) {
 		#print_r($pad);
 
@@ -177,28 +187,32 @@ function fetch_recent_pads($url, $email, $password, $check_public, $filter_time)
 		#print_r($response->code);
 		
 		if($response->code == 200){
+			echo("fetched " . $filename . "\n");
 			$file = fopen($filename, "w");
 			fwrite($file, $response->data);
 			fclose($file);
 
 			exec("git add \"".$filename."\"");
 		}
+		else{
+			echo("ignored " . $filename . "\n");
+		}
 	}
 
+	echo("commit\n");
 	exec("git commit -am \"pads updated: $(git status)\" > /dev/null");
+	echo("commited\n");
 
 	chdir($olddir);
 
 	if(!$check_public){
 		// 8. sign out
+		echo("8. sign out\n");
 		$_url = $url."/ep/account/sign-out";
 		$response = drupal_http_request($_url, $_headers, 'GET', http_build_query($_data), 0);
 		#print_r($response);
 		#die();
 	}
-	
-
-	return $pads;
 }
 
 //error_reporting(E_ALL ^ E_NOTICE);
