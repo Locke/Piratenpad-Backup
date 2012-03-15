@@ -24,7 +24,7 @@ function parse($html, $url){
 	#die();
 	
 	foreach($regs[1] as $id => $reg) {
-		preg_match_all("/(\/.*)?\"/", $reg, $regs2);
+		preg_match_all("/(\/.*?)?\"/", $reg, $regs2);
 		#print_r($regs2);
 		$pads[$id] = array();
 		$pads[$id]["name"] = strip_tags($reg);
