@@ -135,12 +135,6 @@ function get_recent_pads($url, $email, $password, $check_public, $filter_time) {
 	#print_r($response);
 	
 	$pads = parse($response->data, $url);
-
-	// 8. sign out
-	$_url = $url."/ep/account/sign-out";
-	$response = drupal_http_request($_url, $_headers, 'GET', http_build_query($_data), 0);
-	#print_r($response);
-	#die();
 	
 	// clear old pads
 	if($filter_time > 0){
@@ -153,6 +147,13 @@ function get_recent_pads($url, $email, $password, $check_public, $filter_time) {
 
 	// 9. check pads public status
 	if($check_public){
+		// 8. sign out
+		$_url = $url."/ep/account/sign-out";
+		$response = drupal_http_request($_url, $_headers, 'GET', http_build_query($_data), 0);
+		#print_r($response);
+		#die();
+
+		/* can be removed */
 		foreach($pads as $id => $pad) {
 			#print_r($pad);
 			$response = drupal_http_request($pad["url"], $_headers, 'GET', http_build_query($_data), 0);
@@ -163,7 +164,20 @@ function get_recent_pads($url, $email, $password, $check_public, $filter_time) {
 	}
 	#print_r($pads);
 	#die();
+
 	
+	/* download pads */
+
+
+	if(!$check_public){
+		// 8. sign out
+		$_url = $url."/ep/account/sign-out";
+		$response = drupal_http_request($_url, $_headers, 'GET', http_build_query($_data), 0);
+		#print_r($response);
+		#die();
+	}
+	
+
 	return $pads;
 }
 
