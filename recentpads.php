@@ -1,5 +1,10 @@
 <?php
 
+$base="https://YOURTEAM.piratenpad.de";
+$exportpre="/ep/pad/export/";
+$exportpost="/latest?format=txt";
+
+
 include("bootstrap.inc");
 include("common.inc");
 
@@ -156,23 +161,34 @@ function get_recent_pads($url, $email, $password, $check_public, $filter_time) {
 	#print_r($pads);
 	#die();
 
+	$olddir = getcwd();
+	$dir = dirname(__FILE__);
+	chdir($dir . '/backups');
+
 	
 	/* download pads */
 	foreach($pads as $id => $pad) {
 		#print_r($pad);
-		$response = drupal_http_request($pad["url"], $_headers, 'GET', http_build_query($_data), 0);
+
+		$filename = str_replace($url."/", "", $pad["url"]);
+
+		$_url = $base . $exportpre . $filename . $exportpost;
+
+		$response = drupal_http_request($_url, $_headers, 'GET', http_build_query($_data), 0);
 		#print_r($response->code);
-		$filename = "./backups/" . str_replace($url."/", "", $pad["url"]);
 		
 		if($response->code == 200){
-			echo($filename . ": ok\n");
+			$file = fopen($filename, "w");
+			fwrite($file, $response->data);
+			fclose($file);
 
-			/* git add */
+			exec("git add \"".$filename."\"");
 		}
 	}
 
-	/* git commit */
+	exec("git commit -am \"pads updated: $(git status)\" > /dev/null");
 
+	chdir($olddir);
 
 	if(!$check_public){
 		// 8. sign out
