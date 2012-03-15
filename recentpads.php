@@ -162,9 +162,16 @@ function get_recent_pads($url, $email, $password, $check_public, $filter_time) {
 		#print_r($pad);
 		$response = drupal_http_request($pad["url"], $_headers, 'GET', http_build_query($_data), 0);
 		#print_r($response->code);
-		if ($response->code != 200)
-			unset($pads[$id]);
+		$filename = "./backups/" . str_replace($url."/", "", $pad["url"]);
+		
+		if($response->code == 200){
+			echo($filename . ": ok\n");
+
+			/* git add */
+		}
 	}
+
+	/* git commit */
 
 
 	if(!$check_public){
@@ -181,19 +188,10 @@ function get_recent_pads($url, $email, $password, $check_public, $filter_time) {
 
 //error_reporting(E_ALL ^ E_NOTICE);
 
-//print_r($argv);
-//die();
-
 $time = 0;
 if($argv[5] > 0)
 	$time = time() - $argv[5];
 
-$pads = get_recent_pads($argv[1], $argv[2], $argv[3], ($argv[4] == "true"), $time);
-
-//print_r($pads);
-
-foreach($pads as $id => $pad) {
-	echo str_replace($argv[1]."/", "", $pad["url"]) . "\n";
-}
+get_recent_pads($argv[1], $argv[2], $argv[3], ($argv[4] == "true"), $time);
 
 ?>
