@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cp config.default config
+cp config.default.inc config.inc
 
 echo "Do not forget configuring the config!"
 

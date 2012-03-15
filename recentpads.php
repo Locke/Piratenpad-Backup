@@ -1,12 +1,9 @@
 <?php
 
-$base="https://YOURTEAM.piratenpad.de";
-$exportpre="/ep/pad/export/";
-$exportpost="/latest?format=txt";
-
-
 include("bootstrap.inc");
 include("common.inc");
+
+include("config.inc");
 
 /**
 * parse html
@@ -58,9 +55,11 @@ function parse($html, $url){
 }
 
 /**
-* returns array with pad names
+* fetch pads
 */
-function get_recent_pads($url, $email, $password, $check_public, $filter_time) {
+function fetch_recent_pads($url, $email, $password, $check_public, $filter_time) {
+	global $base, $exportpre, $filename, $exportpost;
+
 	$vars = array(
 		"url" => $url."/",
 		"email" => $email,
@@ -204,10 +203,8 @@ function get_recent_pads($url, $email, $password, $check_public, $filter_time) {
 
 //error_reporting(E_ALL ^ E_NOTICE);
 
-$time = 0;
-if($argv[5] > 0)
-	$time = time() - $argv[5];
+$time = time() - $interval;
 
-get_recent_pads($argv[1], $argv[2], $argv[3], ($argv[4] == "true"), $time);
+fetch_recent_pads($base, $email, $password, $check_public, $time);
 
 ?>
