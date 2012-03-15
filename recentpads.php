@@ -152,21 +152,19 @@ function get_recent_pads($url, $email, $password, $check_public, $filter_time) {
 		$response = drupal_http_request($_url, $_headers, 'GET', http_build_query($_data), 0);
 		#print_r($response);
 		#die();
-
-		/* can be removed */
-		foreach($pads as $id => $pad) {
-			#print_r($pad);
-			$response = drupal_http_request($pad["url"], $_headers, 'GET', http_build_query($_data), 0);
-			#print_r($response->code);
-			if ($response->code != 200)
-				unset($pads[$id]);
-		}
 	}
 	#print_r($pads);
 	#die();
 
 	
 	/* download pads */
+	foreach($pads as $id => $pad) {
+		#print_r($pad);
+		$response = drupal_http_request($pad["url"], $_headers, 'GET', http_build_query($_data), 0);
+		#print_r($response->code);
+		if ($response->code != 200)
+			unset($pads[$id]);
+	}
 
 
 	if(!$check_public){
