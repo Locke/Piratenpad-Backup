@@ -203,7 +203,10 @@ function fetch_recent_pads($url, $email, $password, $check_public, $filter_time)
 
 //error_reporting(E_ALL ^ E_NOTICE);
 
-$time = time() - $interval;
+if($interval > 0)
+	$time = time() - $interval;
+else
+	$time = 0;
 
 fetch_recent_pads($base, $email, $password, $check_public, $time);
 
