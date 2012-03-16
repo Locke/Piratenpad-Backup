@@ -1,1 +1,3 @@
 * php script should be ported to run without (or with less) drupal code
+* configurable path for backups
+* better init.sh
