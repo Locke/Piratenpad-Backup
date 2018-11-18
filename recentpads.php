@@ -192,7 +192,7 @@ function fetch_recent_pads($url, $email, $password, $check_public, $filter_time)
 			fwrite($file, $response->data);
 			fclose($file);
 
-			exec("git add \"".$filename."\"");
+			exec("git add -- \"".$filename."\"");
 		}
 		else{
 			echo("ignored " . $filename . "\n");
