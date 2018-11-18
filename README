@@ -1,9 +1,0 @@
-Aim is to get recent changed pads from a team-etherpad and store them for backup in a git repo
-
-Usage:
-
-At first you need to run init.sh, then edit the config file.
-
-Then you can run the backups via "php recentpads.php"
-
-You should run this at least two times and check the results, then you can add it to crontab
